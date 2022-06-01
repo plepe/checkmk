@@ -522,23 +522,30 @@ def get_grouper(grouping_conditions):
 
 def output_aggregator_count_only(group_name, files_iter):
     yield "[[[count_only %s]]]" % group_name
-    count = sum(1 for __ in files_iter)
-    yield repr({"type": "summary", "count": count})
+    count = 0
+    total_size = 0
+    for count, filestat in enumerate(files_iter, 1):
+        total_size = total_size + filestat.size
+    yield repr({"type": "summary", "count": count, "total_size": total_size})
 
 
 def output_aggregator_file_stats(group_name, files_iter):
     yield "[[[file_stats %s]]]" % group_name
     count = 0
+    total_size = 0
     for count, filestat in enumerate(files_iter, 1):
+        total_size = total_size + filestat.size
         yield filestat.dumps()
-    yield repr({"type": "summary", "count": count})
+    yield repr({"type": "summary", "count": count, "total_size": total_size})
 
 
 def output_aggregator_extremes_only(group_name, files_iter):
     yield "[[[extremes_only %s]]]" % group_name
 
     count = 0
+    total_size = 0
     for count, filestat in enumerate(files_iter, 1):
+        total_size = total_size + filestat.size
         if count == 1:  # init
             min_age = max_age = min_size = max_size = filestat
         if filestat.age < min_age.age:
@@ -553,7 +560,7 @@ def output_aggregator_extremes_only(group_name, files_iter):
     extremes = set((min_age, max_age, min_size, max_size)) if count else ()
     for extreme_file in extremes:
         yield extreme_file.dumps()
-    yield repr({"type": "summary", "count": count})
+    yield repr({"type": "summary", "count": count, "total_size": total_size})
 
 
 def output_aggregator_single_file(group_name, files_iter):

@@ -10,6 +10,8 @@ import re
 # params = {
 #     "mincount": (tuple, integer),
 #     "maxcount": -"-,
+#     "mintotal_size": (tuple, integer),
+#     "maxtotal_size": -"-,
 #     "minage_oldest": (tuple, seconds),
 #     "maxage_oldest":  -"-,
 #     "minage_newest": -"-,
@@ -88,6 +90,16 @@ def check_filestats_count(count, params):
         human_readable_func=lambda i: "%d" % i,
     )
 
+def check_filestats_total_size(total_size, params):
+    """common check result - used by main and count_only check"""
+    levels = params.get("maxtotal_size", (None, None)) + params.get("mintotal_size", (None, None))
+    return check_levels(
+        total_size,
+        "total_size",
+        levels,
+        infoname="Filesize in total",
+        human_readable_func=get_bytes_human_readable
+    )
 
 def check_filestats_extremes(files, params, show_files=False):
     """common check result - used by main and extremes_only check"""
@@ -174,8 +186,11 @@ def check_filestats(_item, params, data):
     _output_variety, reported_lines = data
     sumry = [s for s in reported_lines if s.get("type") == "summary"]
     count = sumry[0].get("count", None) if sumry else None
+    total_size = sumry[0].get("total_size", None) if sumry else None
     if count is not None:
         yield check_filestats_count(count, params)
+    if total_size is not None:
+        yield check_filestats_total_size(total_size, params)
 
     files = [i for i in reported_lines if i.get("type") == "file"]
 

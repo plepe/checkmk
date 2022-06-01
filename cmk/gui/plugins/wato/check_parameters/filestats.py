@@ -146,6 +146,26 @@ def _parameter_valuespec_filestats():
                 ),
             ),
             (
+                "mintotal_size",
+                Tuple(
+                    title=_("Minimal total size"),
+                    elements=[
+                        Integer(title=_("Warning below")),
+                        Integer(title=_("Critical below")),
+                    ],
+                ),
+            ),
+            (
+                "maxtotal_size",
+                Tuple(
+                    title=_("Maximal total size"),
+                    elements=[
+                        Integer(title=_("Warning at or above")),
+                        Integer(title=_("Critical at or above")),
+                    ],
+                ),
+            ),
+            (
                 "show_all_files",
                 Checkbox(
                     title=_("Show files in service details"),

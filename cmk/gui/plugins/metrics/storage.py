@@ -141,6 +141,12 @@ metric_info["file_count"] = {
     "color": "23/a",
 }
 
+metric_info["total_size"] = {
+    "title": _("Filesize in total"),
+    "unit": "count",
+    "color": "23/a",
+}
+
 metric_info["new_files"] = {
     "title": _("New files in Spool"),
     "unit": "count",
